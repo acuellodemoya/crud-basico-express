@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
 const Joi = require('@hapi/joi');
 const ruta = express.Router();
@@ -44,10 +45,11 @@ ruta.post('/', (req, res) => {
             })
             .catch( err => {
                 if(err.code === 11000){ //El codigo 11000 viene de mongo por key duplicada
-                    res.status(400).json({
+                    return res.status(400).json({
                         mensaje: "El usuario ya existe!.."
                     });
                 }
+                res.status(400).json({error: err});
             });
     }else{
          res.status(400).json({
@@ -99,7 +101,7 @@ async function crearUsuario(body){
     let usuario = new Usuario({
         email       : body.email,
         nombre      : body.nombre,
-        password    : body.password
+        password    : bcrypt.hashSync(body.password, 10)
     });
     return await usuario.save();
 }

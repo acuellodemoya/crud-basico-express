@@ -1,0 +1,10 @@
+{
+    "nombre": "API Rest Usuarios y Cursos",
+    "configDB": {
+        "HOST": ""
+    },
+    "configToken": {
+        "key": "secret",
+        "expiresIn": "24h"
+    }
+}
