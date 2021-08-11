@@ -31,25 +31,29 @@ ruta.get('/',(req, res) => {
 
 ruta.post('/', (req, res) => {
     let body = req.body;
-
     const {error, value} = schema.validate({nombre: body.nombre, email: body.email});
     if(!error){
         let resultado = crearUsuario(body);
 
-        resultado.then( user => {
-            res.json({
-                valor: user
+        resultado
+            .then( user => {
+                res.json({
+                    nombre: user.nombre,
+                    email: user.email
+                });
             })
-        }).catch( err => {
-            res.status(400).json({
-                err
-            })
-        });
+            .catch( err => {
+                if(err.code === 11000){ //El codigo 11000 viene de mongo por key duplicada
+                    res.status(400).json({
+                        mensaje: "El usuario ya existe!.."
+                    });
+                }
+            });
     }else{
-        res.status(400).json({
+         res.status(400).json({
             error
-        })
-    }    
+        });
+    }
 });
 
 ruta.put('/:email', (req, res) => {
@@ -60,7 +64,8 @@ ruta.put('/:email', (req, res) => {
         let resultado = actualizarUsuario(req.params.email, req.body);
         resultado.then(valor => {
             res.json({
-                valor
+                nombre: valor.nombre,
+                email: valor.email
             })
         }).catch(err => {
             res.status(400).json({
@@ -80,7 +85,8 @@ ruta.delete('/:email', (req, res) => {
     let resultado = desactivarUsuario(req.params.email);
     resultado.then(valor => {
         res.json({
-            usuario: valor
+            nombre: valor.nombre,
+            email: valor.email
         })
     }).catch(err => {
         res.status(400).json({
@@ -99,7 +105,8 @@ async function crearUsuario(body){
 }
 
 async function listarUsuarioActivos(){
-    let usuarios = await Usuario.find({"estado": true});
+    let usuarios = await Usuario.find({"estado": true})
+        .select({nombre:1, email:1});
     return usuarios;
 }
 
@@ -121,5 +128,7 @@ async function desactivarUsuario(email){
     }, {new: true});
     return usuario;
 }
+
+
 
 module.exports = ruta;
