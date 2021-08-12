@@ -1,8 +1,9 @@
 const express = require('express');
 const Curso = require('../models/curso_model');
+const validarToken = require('../middlewares/auth');
 const ruta = express.Router();
 
-ruta.get('/',(req, res) => {
+ruta.get('/', validarToken, (req, res) => {
     let resultado = listarCursosActivos();
     resultado.then(cursos => {
         res.json(cursos);

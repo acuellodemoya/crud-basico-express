@@ -1,7 +1,10 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
 const Joi = require('@hapi/joi');
+const validarToken = require('../middlewares/auth');
 const ruta = express.Router();
 
 const schema = Joi.object({
@@ -17,7 +20,9 @@ const schema = Joi.object({
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
 });
 
-ruta.get('/',(req, res) => {
+
+
+ruta.get('/', validarToken, (req, res) => {
     let resultado = listarUsuarioActivos();
     resultado.then(usuarios => {
         res.json(usuarios)
