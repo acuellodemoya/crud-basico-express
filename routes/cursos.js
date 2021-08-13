@@ -49,15 +49,16 @@ ruta.put('/:id', validarToken, (req, res) => {
 
 async function listarCursosActivos(){
     let cursos = await Curso
-        .find({"estado": true})
-        .populate('autor', 'nombre email -_id');
+        .find({"estado": true});
+        //.populate('autor', 'nombre email -_id');
     return cursos;
 }
 
 async function crearCurso(req){
     let curso = new Curso({
         titulo       : req.body.titulo,
-        autor        : req.usuario._id,
+        //autor        : req.usuario._id,
+        autor:        req.usuario,
         descripcion  : req.body.descripcion
     });
     return await curso.save();
