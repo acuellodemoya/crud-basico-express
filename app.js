@@ -10,6 +10,7 @@ const cors = require('cors');
 mongoose.connect(config.get('configDB.HOST'), {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log('Conectado a MongoDB...'))
     .catch(err => console.log('No se pudo conectar con MongoDB..', err));
+mongoose.set('useCreateIndex', true)
 
 
 const app = express();

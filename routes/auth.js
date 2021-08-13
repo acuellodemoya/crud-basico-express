@@ -13,11 +13,11 @@ ruta.post('/', (req, res) => {
                 const passwordValid = bcrypt.compareSync(req.body.password, data.password);
                 if(!passwordValid) return res.status(400).json({error: 'ok', message:'Usuario o contraseña incorrecta'});
                 const token = jwt.sign({ 
-                    data: {_id: data._id, nombre: data.nombre, email: data.email} 
+                    usuario: {_id: data._id, nombre: data.nombre, email: data.email} 
                 }, config.get('configToken.key'), { expiresIn: config.get('configToken.expiresIn') });
                 //jwt.sign({_id: data._id, nombre: data.nombre, email: data.email}, 'password');
                 res.json({
-                    data: {_id: data._id, nombre: data.nombre, email: data.email},
+                    usuario: {_id: data._id, nombre: data.nombre, email: data.email},
                     token
                 });
             }else{
